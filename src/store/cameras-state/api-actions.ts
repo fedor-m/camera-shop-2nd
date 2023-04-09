@@ -60,7 +60,7 @@ export const fetchCamerasAction = createAsyncThunk<
       ||
       priceGte <= 0
       ||
-      priceGte > Number(priceLte)
+      (Number(priceLte) > 0 && priceGte > Number(priceLte))
       ?
       url += ''
       :
@@ -72,7 +72,7 @@ export const fetchCamerasAction = createAsyncThunk<
     ||
     priceLte <= 0
     ||
-    priceLte < Number(priceGte)
+    (Number(priceGte) > 0 && priceLte < Number(priceGte))
       ? url += '' : url += `&price_lte=${priceLte}`;
   }
   url = checkFiltersInQuery(url, category, types, levels);

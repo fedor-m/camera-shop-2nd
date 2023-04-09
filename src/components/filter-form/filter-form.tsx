@@ -46,17 +46,28 @@ function FilterForm(): JSX.Element {
   };
   const handleSendPriceGte = () => {
     if (
-      (Number(newPriceGte) >= Number(minPrice))
-      &&
-      (Number(newPriceGte) <= Number(maxPrice))
+      (Number(newPriceGte) < Number(minPrice))
     ) {
-      searchParams.set(QueryParameter.PriceGte, String(newPriceGte));
-      setSearchParams(searchParams);
+      setNewPriceGte(minPrice);
+      searchParams.set(QueryParameter.PriceGte, String(minPrice));
+    }
+    else if (
+      Number(newPriceGte) > Number(maxPrice)
+    ) {
+      setNewPriceGte(maxPrice);
+      searchParams.set(QueryParameter.PriceGte, String(maxPrice));
+    }
+    else if (
+      Number(newPriceGte) > Number(newPriceLte)
+    ) {
+      setNewPriceGte(newPriceLte);
+      searchParams.set(QueryParameter.PriceGte, String(newPriceLte));
     }
     else {
-      searchParams.set(QueryParameter.PriceGte, String(minPrice));
-      setSearchParams(searchParams);
+      setNewPriceGte(newPriceGte);
+      searchParams.set(QueryParameter.PriceGte, String(newPriceGte));
     }
+    setSearchParams(searchParams);
   };
   const stateMaxPrice = (
     !priceLte
@@ -79,18 +90,28 @@ function FilterForm(): JSX.Element {
   };
   const handleSendPriceLte = () => {
     if (
-      (Number(newPriceLte) > Number(maxPrice))
-      ||
-      (Number(newPriceLte) < Number(newPriceGte))
+      (Number(newPriceLte) < Number(minPrice))
     ) {
-      setNewPriceLte(Number(maxPrice));
+      setNewPriceGte(minPrice);
+      searchParams.set(QueryParameter.PriceLte, String(minPrice));
+    }
+    else if (
+      Number(newPriceLte) > Number(maxPrice)
+    ) {
+      setNewPriceGte(maxPrice);
       searchParams.set(QueryParameter.PriceLte, String(maxPrice));
-      setSearchParams(searchParams);
+    }
+    else if (
+      Number(newPriceLte) < Number(newPriceGte)
+    ) {
+      setNewPriceGte(newPriceLte);
+      searchParams.set(QueryParameter.PriceLte, String(newPriceGte));
     }
     else {
+      setNewPriceLte(newPriceLte);
       searchParams.set(QueryParameter.PriceLte, String(newPriceLte));
-      setSearchParams(searchParams);
     }
+    setSearchParams(searchParams);
   };
   const handleArrowKeysPriceGte = (event: KeyboardEvent<HTMLInputElement>) => {
     if (isArrowUpKey(event.key)) {
@@ -311,17 +332,6 @@ function FilterForm(): JSX.Element {
             className="btn catalog-filter__reset-btn"
             type="reset"
             onClick={handleResetForm}
-            disabled={
-              !priceGte
-              &&
-              !priceLte
-              &&
-              !category
-              &&
-              !levels
-              &&
-              !types
-            }
           >
             Сбросить фильтры
           </button>
