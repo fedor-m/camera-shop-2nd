@@ -30,7 +30,7 @@ function FilterForm(): JSX.Element {
       ||
       isNaN(Number(priceGte))
       ||
-      Number(priceGte) < 0
+      Number(priceGte) <= 0
       ||
       ((Number(priceGte) < (Number(minPrice)) && (Number(minPrice) > 0)))
       ||
@@ -46,6 +46,12 @@ function FilterForm(): JSX.Element {
   };
   const handleSendPriceGte = () => {
     if (
+      Number(newPriceGte) <= 0
+    ) {
+      setNewPriceGte(null);
+      searchParams.delete(QueryParameter.PriceGte);
+    }
+    else if (
       (Number(newPriceGte) < Number(minPrice))
     ) {
       setNewPriceGte(minPrice);
@@ -58,7 +64,7 @@ function FilterForm(): JSX.Element {
       searchParams.set(QueryParameter.PriceGte, String(maxPrice));
     }
     else if (
-      Number(newPriceGte) > Number(newPriceLte)
+      Number(newPriceLte) > 0 && Number(newPriceGte) > Number(newPriceLte)
     ) {
       setNewPriceGte(newPriceLte);
       searchParams.set(QueryParameter.PriceGte, String(newPriceLte));
@@ -74,7 +80,7 @@ function FilterForm(): JSX.Element {
       ||
       isNaN(Number(priceLte))
       ||
-      Number(priceLte) < 0
+      Number(priceLte) <= 0
       ||
       ((Number(priceLte) > Number(maxPrice)) && Number(maxPrice) > 0)
       ||
@@ -90,6 +96,12 @@ function FilterForm(): JSX.Element {
   };
   const handleSendPriceLte = () => {
     if (
+      Number(newPriceLte) <= 0
+    ) {
+      setNewPriceLte(null);
+      searchParams.delete(QueryParameter.PriceLte);
+    }
+    else if (
       (Number(newPriceLte) < Number(minPrice))
     ) {
       setNewPriceGte(minPrice);
@@ -115,10 +127,10 @@ function FilterForm(): JSX.Element {
   };
   const handleArrowKeysPriceGte = (event: KeyboardEvent<HTMLInputElement>) => {
     if (isArrowUpKey(event.key)) {
-      setNewPriceGte(Number(newPriceLte) + 1);
+      setNewPriceGte(Number(newPriceGte) + 1);
     }
     else if (isArrowDownKey(event.key)) {
-      setNewPriceGte(Number(newPriceLte) - 1);
+      setNewPriceGte(Number(newPriceGte) - 1);
     }
   };
   const handleArrowKeysPriceLte = (event: KeyboardEvent<HTMLInputElement>) => {
@@ -290,10 +302,9 @@ function FilterForm(): JSX.Element {
                     placeholder={String(minPrice)}
                     onChange={handlePriceGteChange}
                     onBlur={handleSendPriceGte}
-                    min={0}
                     value={String(newPriceGte)}
                     onKeyDown={handleArrowKeysPriceGte}
-                    step="1"
+                    step={1}
                   />
                 </label>
               </div>
@@ -305,10 +316,9 @@ function FilterForm(): JSX.Element {
                     placeholder={String(maxPrice)}
                     onChange={handlePriceLteChange}
                     onBlur={handleSendPriceLte}
-                    min={0}
                     value={String(newPriceLte)}
                     onKeyDown={handleArrowKeysPriceLte}
-                    step="1"
+                    step={1}
                   />
                 </label>
               </div>
