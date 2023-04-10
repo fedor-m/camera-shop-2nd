@@ -14,17 +14,24 @@ import {
   CameraCategory,
   CameraType,
   LEVELS,
+  PageSetting,
   QueryParameter
 } from '../../const';
-import { isArrowDownKey, isArrowUpKey } from '../../utils';
+import {
+  isArrowDownKey,
+  isArrowUpKey
+} from '../../utils';
 
 function FilterForm(): JSX.Element {
   const [searchParams, setSearchParams] = useSearchParams();
+  const setFilters = () => {
+    searchParams.delete(QueryParameter.Page);
+    setSearchParams(searchParams);
+  };
   const minPrice = useAppSelector(getMinPrice);
   const maxPrice = useAppSelector(getMaxPrice);
   const priceGte = searchParams.get(QueryParameter.PriceGte);
   const priceLte = searchParams.get(QueryParameter.PriceLte);
-
   const stateMinPrice = (
     !priceGte
       ||
@@ -46,12 +53,6 @@ function FilterForm(): JSX.Element {
   };
   const handleSendPriceGte = () => {
     if (
-      Number(newPriceGte) <= 0
-    ) {
-      setNewPriceGte(null);
-      searchParams.delete(QueryParameter.PriceGte);
-    }
-    else if (
       (Number(newPriceGte) < Number(minPrice))
     ) {
       setNewPriceGte(minPrice);
@@ -73,7 +74,7 @@ function FilterForm(): JSX.Element {
       setNewPriceGte(newPriceGte);
       searchParams.set(QueryParameter.PriceGte, String(newPriceGte));
     }
-    setSearchParams(searchParams);
+    setFilters();
   };
   const stateMaxPrice = (
     !priceLte
@@ -96,15 +97,9 @@ function FilterForm(): JSX.Element {
   };
   const handleSendPriceLte = () => {
     if (
-      Number(newPriceLte) <= 0
-    ) {
-      setNewPriceLte(null);
-      searchParams.delete(QueryParameter.PriceLte);
-    }
-    else if (
       (Number(newPriceLte) < Number(minPrice))
     ) {
-      setNewPriceGte(minPrice);
+      setNewPriceLte(minPrice);
       searchParams.set(QueryParameter.PriceLte, String(minPrice));
     }
     else if (
@@ -123,22 +118,22 @@ function FilterForm(): JSX.Element {
       setNewPriceLte(newPriceLte);
       searchParams.set(QueryParameter.PriceLte, String(newPriceLte));
     }
-    setSearchParams(searchParams);
+    setFilters();
   };
   const handleArrowKeysPriceGte = (event: KeyboardEvent<HTMLInputElement>) => {
     if (isArrowUpKey(event.key)) {
-      setNewPriceGte(Number(newPriceGte) + 1);
+      setNewPriceGte(Number(newPriceGte) + PageSetting.Step);
     }
     else if (isArrowDownKey(event.key)) {
-      setNewPriceGte(Number(newPriceGte) - 1);
+      setNewPriceGte(Number(newPriceGte) - PageSetting.Step);
     }
   };
   const handleArrowKeysPriceLte = (event: KeyboardEvent<HTMLInputElement>) => {
     if (isArrowUpKey(event.key)) {
-      setNewPriceLte(Number(newPriceLte) + 1);
+      setNewPriceLte(Number(newPriceLte) + PageSetting.Step);
     }
     else if (isArrowDownKey(event.key)) {
-      setNewPriceLte(Number(newPriceLte) - 1);
+      setNewPriceLte(Number(newPriceLte) - PageSetting.Step);
     }
   };
   const category = searchParams.get(QueryParameter.Category);
@@ -146,10 +141,12 @@ function FilterForm(): JSX.Element {
     const { checked, value } = event.target;
     if (checked) {
       searchParams.set(QueryParameter.Category, value);
+      searchParams.delete(QueryParameter.Page);
       setSearchParams(searchParams);
     }
     else {
       searchParams.delete(QueryParameter.Category);
+      searchParams.delete(QueryParameter.Page);
       setSearchParams(searchParams);
     }
   };
@@ -175,7 +172,7 @@ function FilterForm(): JSX.Element {
     updatedTypes.forEach(
       (type) => searchParams.append(QueryParameter.Type, type)
     );
-    setSearchParams(searchParams);
+    setFilters();
   };
   const levels = searchParams.getAll(QueryParameter.Level);
   const handleCheckLevels = (event: ChangeEvent<HTMLInputElement>) => {
@@ -199,7 +196,7 @@ function FilterForm(): JSX.Element {
     updatedLevels.forEach(
       (level) => searchParams.append(QueryParameter.Level, level)
     );
-    setSearchParams(searchParams);
+    setFilters();
   };
   const handleResetForm = () => {
     searchParams.delete(QueryParameter.PriceGte);
@@ -207,6 +204,9 @@ function FilterForm(): JSX.Element {
     searchParams.delete(QueryParameter.Category);
     searchParams.delete(QueryParameter.Type);
     searchParams.delete(QueryParameter.Level);
+    searchParams.delete(QueryParameter.Sort);
+    searchParams.delete(QueryParameter.Order);
+    searchParams.delete(QueryParameter.Page);
     setSearchParams(searchParams);
     setNewPriceGte(null);
     setNewPriceLte(null);
@@ -304,7 +304,7 @@ function FilterForm(): JSX.Element {
                     onBlur={handleSendPriceGte}
                     value={String(newPriceGte)}
                     onKeyDown={handleArrowKeysPriceGte}
-                    step={1}
+                    step={PageSetting.Step}
                   />
                 </label>
               </div>
@@ -318,7 +318,7 @@ function FilterForm(): JSX.Element {
                     onBlur={handleSendPriceLte}
                     value={String(newPriceLte)}
                     onKeyDown={handleArrowKeysPriceLte}
-                    step={1}
+                    step={PageSetting.Step}
                   />
                 </label>
               </div>
