@@ -25,6 +25,7 @@ import { Filter } from '../../types/filter';
 import {
   AppRoute,
   QueryParameter,
+  PageSetting
 } from '../../const';
 import Icons from '../../components/icons/icons';
 import Header from '../../components/header/header';
@@ -110,7 +111,7 @@ function CataloguePage(): JSX.Element {
                     ) : (
                       <>
                         {Number(cameras?.length) > 0 && <Cards cameras={cameras} />}
-                        {Number(cameras?.length) > 0 && <Pagination camerasLength={Number(total)} />}
+                        {Number(cameras?.length) > 0 && Number(total) > PageSetting.CardsNumber && <Pagination camerasLength={Number(total)} />}
                         {Number(cameras?.length) === 0 && <div className="title">Нет результатов, удовлетворяющих условиям</div>}
                         {!cameras && <div className="title">Пожалуйста, обновите страницу или войдите позже</div>}
                       </>
