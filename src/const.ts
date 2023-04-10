@@ -79,7 +79,8 @@ export enum PageSetting {
   SlidesNumber = 3,
   ReviewsNumber = 3,
   MinReviewLength = 5,
-  MaxResultsListLength = 4
+  MaxResultsListLength = 4,
+  Step = 1
 }
 export enum PageNumber {
   First = 1,
