@@ -14,11 +14,13 @@ function SortForm(): JSX.Element {
   const handleFieldSortTypeChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target;
     searchParams.set(QueryParameter.Sort, value);
+    searchParams.delete(QueryParameter.Page);
     setSearchParams(searchParams);
   };
   const handleFieldSortOrderChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target;
     searchParams.set(QueryParameter.Order, value);
+    searchParams.delete(QueryParameter.Page);
     setSearchParams(searchParams);
   };
   const checkSortPriceValue = () => sort === SortParameter.Price || ((!sort || (sort !== SortParameter.Price && sort !== SortParameter.Rating)) && (order === OrderParameter.Asc || order === OrderParameter.Desc));
