@@ -14,14 +14,19 @@ import {
 } from './const';
 export const getPageNumber = (page: number) =>
   (Number(page) > 0) ? Number(page) : PageNumber.First;
-export const getPagesNumber = (camerasLength: number) =>
-  camerasLength % PageSetting.CardsNumber === 0
-    ? camerasLength / PageSetting.CardsNumber
-    : Number((camerasLength / PageSetting.CardsNumber).toFixed(0)) + 1;
-export const getItemNumbersToPage = (page: number, total: number): Pages => ({
-  start: PageSetting.CardsNumber * (page - 1),
-  end: PageSetting.CardsNumber * page > total ? total : PageSetting.CardsNumber * page
-});
+export const getPagesNumber = (total: number) =>
+  total % PageSetting.CardsNumber === 0
+    ? total / PageSetting.CardsNumber
+    : Math.ceil(total / PageSetting.CardsNumber);
+export const getItemNumbersToPage = (page: number, total: number): Pages =>
+{
+  const start = PageSetting.CardsNumber * (page - 1);
+  const end = start + PageSetting.CardsNumber;
+  return {
+    start,
+    end: end > total ? total : end
+  };
+};
 export const getStarsInRating = (rating: number): Stars => ({
   gold: [...Array.from({ length: rating }).keys()],
   grey: [...Array.from({ length: Rating.Max - rating }).keys()],
